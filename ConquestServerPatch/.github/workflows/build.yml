@@ -1,0 +1,91 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Conquest.cpp'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Visual Studio
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: x64
+
+    - name: Configure with CMake
+      run: cmake -B build -S . -G "Visual Studio 17 2022" -A Win32
+
+    - name: Build with CMake
+      run: cmake --build build --config Release
+
+
+    - name: Copy the built executable
+      run: |
+        cp build/Release/Conquest.exe Conquest.exe
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Conquest
+        path: |
+          Conquest.exe
+          EANationStaticPatch.ps1
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download build artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: Conquest
+
+    - name: Generate Date-Based Tag and Release Name
+      run: |
+        # Get the current date in YYYY-MM-DD format
+        DATE=$(date +'%Y-%m-%d')
+        echo "TAG_NAME=release-$DATE" >> $GITHUB_ENV
+        echo "RELEASE_NAME=Release $DATE" >> $GITHUB_ENV
+
+    - name: Create a GitHub Release
+      id: make_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        release_name: ${{ env.RELEASE_NAME }}
+        body: |
+          This is an automated release performed by GitHub Actions.
+        draft: false
+        prerelease: false
+
+    - name: Upload PowerShell Script to Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.make_release.outputs.upload_url }}
+        asset_path: ./EANationStaticPatch.ps1
+        asset_name: EANationStaticPatch.ps1
+        asset_content_type: text/plain
+
+    - name: Upload Executable to Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.make_release.outputs.upload_url }}
+        asset_path: ./Conquest.exe
+        asset_name: Conquest.exe
+        asset_content_type: application/octet-stream
