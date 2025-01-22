@@ -8,10 +8,10 @@
 
 struct AddressInfo {
     SIZE_T n_bytes;
-    const BYTE* ssl_position;
-    const BYTE* endpoint1_position;
-    const BYTE* endpoint2_position;
-    const BYTE* endpoint3_position;
+    const BYTE* ssl_position;       // Address of the SSL check
+    const BYTE* endpoint1_position; // Address of 'fesl.ea.com\x00'
+    const BYTE* endpoint2_position; // Address of '.fesl\x00'
+    const BYTE* endpoint3_position; // Address of '.ea.com\x00'
 };
 
 // Declare static AddressInfo objects
@@ -19,32 +19,32 @@ static const AddressInfo GENUINE_V1_0 = {
     12566288,
     reinterpret_cast<const BYTE*>(0x006093c9),
     reinterpret_cast<const BYTE*>(0x009a6a40),
-    reinterpret_cast<const BYTE*>(0x009a6cb4),
-    reinterpret_cast<const BYTE*>(0x009a6cbc)
+    reinterpret_cast<const BYTE*>(0x009a6cbc),
+    reinterpret_cast<const BYTE*>(0x009a6cb4)
 };
 
 static const AddressInfo GENUINE_V1_1 = {
     12545808,
     reinterpret_cast<const BYTE*>(0x00609379),
     reinterpret_cast<const BYTE*>(0x009a6a50),
-    reinterpret_cast<const BYTE*>(0x1002e550),
-    reinterpret_cast<const BYTE*>(0x009a6ccc)
+    reinterpret_cast<const BYTE*>(0x009a6ccc),
+    reinterpret_cast<const BYTE*>(0x009a6cc4)
 };
 
 static const AddressInfo NOCD_V1_0 = {
     6660740,
     reinterpret_cast<const BYTE*>(0x006093c9),
     reinterpret_cast<const BYTE*>(0x009a6a40),
-    reinterpret_cast<const BYTE*>(0x009a6cb4),
-    reinterpret_cast<const BYTE*>(0x009a6cbc)
+    reinterpret_cast<const BYTE*>(0x009a6cbc),
+    reinterpret_cast<const BYTE*>(0x009a6cb4)
 };
 
 static const AddressInfo NOCD_V1_1 = {
     6657688,
     reinterpret_cast<const BYTE*>(0x00609379),
     reinterpret_cast<const BYTE*>(0x009a6a50),
-    reinterpret_cast<const BYTE*>(0x009a6cc4),
-    reinterpret_cast<const BYTE*>(0x009a6ccc)
+    reinterpret_cast<const BYTE*>(0x009a6ccc),
+    reinterpret_cast<const BYTE*>(0x009a6cc4)
 };
 
 // Function to write a sequence of bytes to memory
