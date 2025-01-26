@@ -229,6 +229,13 @@ int wmain(int argc, wchar_t* argv[]) {
                     return -1;
                 }
             }
+            if (buffer == PATCH_SSLCHECK_BYPASS_PATTERN) {
+                // SSL check is already patched
+                std::cout << "SSL check bypass has been already patched.\n";
+                // Sleep a bit to make sure that the other memory locations are available
+                Sleep(5000);
+                break;
+            }
         }
         // We nearly do busy waiting... Just suspend shortly...
         Sleep(1);
